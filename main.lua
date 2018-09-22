@@ -12,6 +12,8 @@ function love.load()
 
 end
 
+
+
 function love.update(dt)
   if love.keyboard.isDown('s') then
     player.y = player.y + player.speed * dt
@@ -32,7 +34,32 @@ function love.update(dt)
 
 end
 
+-- 45 * (pi /180) is the radian value
+-- 1.5 * (180 / pi) is the degree value
+
 function love.draw()
   love.graphics.draw(sprites.background, 0, 0)
-  love.graphics.draw(sprites.player, player.x, player.y)
+  love.graphics.draw(sprites.player, player.x, player.y, playerMouseAngle(), nil, nil, sprites.player:getWidth()/2, sprites.player:getHeight()/2)
 end
+
+function playerMouseAngle()
+  return math.atan2(player.y - love.mouse.getY(), player.x - love.mouse.getX()) + math.pi
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--
