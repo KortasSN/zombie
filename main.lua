@@ -10,7 +10,13 @@ function love.load()
   player.y = 200
   player.speed = 180
 
+  zombies = {}
+
+
 end
+
+
+
 
 
 
@@ -31,7 +37,16 @@ function love.update(dt)
    player.x = player.x + player.speed * dt
   end
 
+  for i, z in ipairs(zombies) do
+    z.x = z.x + math.cos(zombiePlayerAngle(z)) * z.speed * dt
+    z.y = z.y + math.sin(zombiePlayerAngle(z)) * z.speed * dt
 
+    if distanceBetween(z.x, z.y, player.x, player.y) < 35 then
+      for i, z in ipairs(zombies) do
+        zombies[i] = nil
+      end
+    end
+  end
 end
 
 -- 45 * (pi /180) is the radian value
@@ -40,14 +55,38 @@ end
 function love.draw()
   love.graphics.draw(sprites.background, 0, 0)
   love.graphics.draw(sprites.player, player.x, player.y, playerMouseAngle(), nil, nil, sprites.player:getWidth()/2, sprites.player:getHeight()/2)
+
+  for i, z in ipairs(zombies) do
+    love.graphics.draw(sprites.zombie, z.x, z.y, zombiePlayerAngle(z), nil, nil, sprites.zombie:getWidth()/2, sprites.zombie:getHeight()/2)
+  end
 end
 
 function playerMouseAngle()
   return math.atan2(player.y - love.mouse.getY(), player.x - love.mouse.getX()) + math.pi
 end
 
+function zombiePlayerAngle(enemy)
+  return math.atan2(player.y - enemy.y, player.x - enemy.x)
+end
 
+function spawnZombie()
+  zombie = {}
+  zombie.x = math.random(0, love.graphics.getWidth())
+  zombie.y = math.random(0, love.graphics.getHeight())
+  zombie.speed = 100
 
+  table.insert(zombies, zombie)
+end
+
+function love.keypressed(key, scancode, isrepeat)
+ if key == 'space' then
+   spawnZombie()
+ end
+end
+
+function distanceBetween(x1, y1, x2, y2)
+  return math.sqrt((y2 - y1)^2 + (x2 - x1)^2)
+end
 
 
 
