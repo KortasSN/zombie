@@ -11,7 +11,7 @@ function love.load()
   player.speed = 180
 
   zombies = {}
-
+  bullets = {}
 
 end
 
@@ -47,6 +47,11 @@ function love.update(dt)
       end
     end
   end
+
+  for i, b in ipairs(bullets) do
+    b.x = b.x + math.cos(b.direction) * b.speed * dt
+    b.y = b.y + math.sin(b.direction) * b.speed * dt
+  end
 end
 
 -- 45 * (pi /180) is the radian value
@@ -59,7 +64,12 @@ function love.draw()
   for i, z in ipairs(zombies) do
     love.graphics.draw(sprites.zombie, z.x, z.y, zombiePlayerAngle(z), nil, nil, sprites.zombie:getWidth()/2, sprites.zombie:getHeight()/2)
   end
+
+  for i, b in ipairs(bullets) do
+    love.graphics.draw(sprites.bullet, b.x, b.y, nil, 0.5, 0.5, sprites.bullet:getWidth()/2, sprites.bullet:getHeight()/2)
+  end
 end
+
 
 function playerMouseAngle()
   return math.atan2(player.y - love.mouse.getY(), player.x - love.mouse.getX()) + math.pi
@@ -78,10 +88,26 @@ function spawnZombie()
   table.insert(zombies, zombie)
 end
 
+function spawnBullet()
+  bullet = {}
+  bullet.x = player.x
+  bullet.y = player.y
+  bullet.speed = 500
+  bullet.direction = playerMouseAngle()
+
+  table.insert(bullets, bullet)
+
+end
+
 function love.keypressed(key, scancode, isrepeat)
  if key == 'space' then
    spawnZombie()
  end
+end
+function love.mousepressed(x, y, b, isTouch)
+  if b == 1 then
+    spawnBullet()
+  end
 end
 
 function distanceBetween(x1, y1, x2, y2)
